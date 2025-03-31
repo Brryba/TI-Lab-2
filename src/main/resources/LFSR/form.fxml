@@ -27,7 +27,7 @@
                    promptText="Введите данные..." minWidth="500"/>
     </HBox>
 
-    <Button text="Зашифровать" fx:id="startCipher"
+    <Button text="Зашифровать" fx:id="startCipher" onAction="#cipher"
             minWidth="300" minHeight="40" style="-fx-margin: 10">
         <font>
             <Font name="Arial" size="14.0" />
@@ -35,8 +35,6 @@
     </Button>
 
     <VBox spacing="5" style="-fx-padding: 10 0 0 0;">
-        <Label text="Результаты:"/>
-
         <Label text="Исходный текст:"/>
         <TextArea fx:id="plainBits" editable="false" wrapText="true"
                   prefHeight="100" prefWidth="780"/>

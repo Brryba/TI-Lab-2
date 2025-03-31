@@ -2,14 +2,12 @@ package LFSR;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.FileChooser;
-
-import java.io.*;
-import java.util.List;
 
 public class Controller {
-    @FXML private MenuItem menuOpen;
-    @FXML private MenuItem menuSave;
+    @FXML
+    private MenuItem menuOpen;
+    @FXML
+    private MenuItem menuSave;
     @FXML
     private TextField registerStart;
     @FXML
@@ -23,39 +21,38 @@ public class Controller {
 
     private byte[] plainBytesArray;
 
-    @FXML
-    public List<Byte> openFile() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open File");
-        fileChooser.getExtensionFilters().addAll();
-        File file = fileChooser.showOpenDialog(null);
-        if (file != null) {
-            try (InputStream is = new FileInputStream(file)) {
-                plainBytesArray = is.readAllBytes();
-            } catch (FileNotFoundException e) {
-                System.err.println("File not found");
-                return null;
-            } catch (IOException e) {
-                System.err.println("I/O Error");
-            }
+    private byte[] keyBitsArray;
 
+    private byte[] outputBytesArray;
+
+    public final static int REGISTER_LENGTH = 35;
+
+    public final static int DISPLAY_MAX_SIZE = 10;
+
+    @FXML
+    public void openFile() {
+        plainBytesArray = FileUtil.readFile();
+        if (plainBytesArray !=null) {
+            plainBits.setText(Parser.parseStringToBinary(plainBytesArray));
+        } else {
+            showError("Empty File");
         }
-        return null;
     }
 
+    @FXML
     public void saveFile() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save File");
-        fileChooser.getExtensionFilters().addAll();
-        File file = fileChooser.showSaveDialog(null);
-        if (file != null) {
-            try (OutputStream os = new FileOutputStream(file)) {
-                os.write(plainBytesArray);
-            } catch (FileNotFoundException e) {
-                System.err.println("File not found");
-            } catch (IOException e) {
-                System.err.println("I/O Error");
-            }
-        }
+        FileUtil.writeFile(plainBytesArray);
+    }
+
+    @FXML
+    public void cipher() {
+        keyBitsArray = Parser.parseBinaryToBitArray(registerStart.getText());
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(message);
+        alert.showAndWait();
     }
 }
