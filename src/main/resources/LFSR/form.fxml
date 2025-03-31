@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/fxml/1" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="LFSR.Controller" spacing="10">
+
+    <MenuBar>
+        <Menu text="Файл">
+            <MenuItem text="Открыть" fx:id="menuOpen" onAction="#openFile"/>
+            <MenuItem text="Сохранить" fx:id="menuSave" onAction="#saveFile" />
+        </Menu>
+    </MenuBar>
+
+    <Label text="x^35 + x^2 + 1">
+        <font>
+            <Font name="Arial" size="18.0" />
+        </font>
+    </Label>
+
+    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10 0 10 0;">
+        <Label text="Начальное состояние регистра:" minWidth="100"/>
+        <TextField fx:id="registerStart" text="11111111111111111111111111111111111"
+                   promptText="Введите данные..." minWidth="500"/>
+    </HBox>
+
+    <Button text="Зашифровать" fx:id="startCipher"
+            minWidth="300" minHeight="40" style="-fx-margin: 10">
+        <font>
+            <Font name="Arial" size="14.0" />
+        </font>
+    </Button>
+
+    <VBox spacing="5" style="-fx-padding: 10 0 0 0;">
+        <Label text="Результаты:"/>
+
+        <Label text="Исходный текст:"/>
+        <TextArea fx:id="plainBits" editable="false" wrapText="true"
+                  prefHeight="100" prefWidth="780"/>
+
+        <Label text="Получившийся ключ:"/>
+        <TextArea fx:id="keyBits" editable="false" wrapText="true"
+                  prefHeight="100" prefWidth="780"/>
+
+        <Label text="Зашифрованный текст:"/>
+        <TextArea fx:id="outputBits" editable="false" wrapText="true"
+                  prefHeight="100" prefWidth="780"/>
+    </VBox>
+</VBox>
