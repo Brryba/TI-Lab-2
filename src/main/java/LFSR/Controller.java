@@ -1,7 +1,11 @@
 package LFSR;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Controller {
     @FXML
@@ -18,12 +22,14 @@ public class Controller {
     private TextArea keyBits;
     @FXML
     private TextArea outputBits;
+    @FXML
+    private Label lengthShower;
 
-    private byte[] plainBytesArray;
+    private List<Byte> plainBytesList;
 
-    private byte[] keyBitsArray;
+    private List<Byte> keyBytesList;
 
-    private byte[] outputBytesArray;
+    private List<Byte> cipherBytesList;
 
     public final static int REGISTER_LENGTH = 35;
 
@@ -31,22 +37,62 @@ public class Controller {
 
     @FXML
     public void openFile() {
-        plainBytesArray = FileUtil.readFile();
-        if (plainBytesArray !=null) {
-            plainBits.setText(Parser.parseStringToBinary(plainBytesArray));
-        } else {
-            showError("Empty File");
+        plainBytesList = FileUtil.readFile();
+        if (plainBytesList != null) {
+            plainBits.setText(Parser.parseStringToBinary(plainBytesList));
+            outputBits.setText("");
         }
     }
 
     @FXML
     public void saveFile() {
-        FileUtil.writeFile(plainBytesArray);
+        FileUtil.writeFile(cipherBytesList);
+    }
+
+    private void addToShowingArrayIfNeeded(byte nextByte, int position) {
+        if (plainBytesList.size() < 2 * DISPLAY_MAX_SIZE || position < DISPLAY_MAX_SIZE
+                || position >= plainBytesList.size() - DISPLAY_MAX_SIZE) {
+            keyBytesList.add(nextByte);
+        }
     }
 
     @FXML
     public void cipher() {
-        keyBitsArray = Parser.parseBinaryToBitArray(registerStart.getText());
+        if (!isKeyValid(registerStart.getText())) {
+            return;
+        }
+        if (plainBytesList == null || plainBytesList.isEmpty()) {
+            showError("Сначала надо выбрать файл для шифрования");
+            return;
+        }
+
+        KeyGenerator.keyBitsArray = Parser.parseBinaryToBitArray(registerStart.getText());
+        keyBytesList = new ArrayList<>();
+        cipherBytesList = new ArrayList<>();
+        for (int i = 0; i < plainBytesList.size(); i++) {
+            byte next = KeyGenerator.generateByteKey();
+            addToShowingArrayIfNeeded(next, i);
+            cipherBytesList.add((byte) (next ^ plainBytesList.get(i)));
+        }
+
+
+        keyBits.setText(Parser.parseKeyString(keyBytesList));
+        outputBits.setText(Parser.parseStringToBinary(cipherBytesList));
+    }
+
+    private boolean isKeyValid(String key) {
+        if (key.length() != REGISTER_LENGTH) {
+            System.out.println(key.length());
+            showError("Введите ключ корректной длины");
+            return false;
+        }
+        for (char c : key.toCharArray()) {
+            if (c != '1' && c != '0') {
+                showError("Ключ должен состоять из 0 и 1");
+                return false;
+            }
+        }
+        return true;
     }
 
     private void showError(String message) {
@@ -54,5 +100,9 @@ public class Controller {
         alert.setTitle("Error");
         alert.setHeaderText(message);
         alert.showAndWait();
+    }
+
+    public void showKeyLength() {
+        lengthShower.setText("" + registerStart.getText().length());
     }
 }

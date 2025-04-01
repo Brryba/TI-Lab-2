@@ -3,16 +3,20 @@ package LFSR;
 import javafx.stage.FileChooser;
 
 import java.io.*;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class FileUtil {
-    public static byte[] readFile() {
+    public static List<Byte> readFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open File");
         fileChooser.getExtensionFilters().addAll();
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             try (InputStream is = new FileInputStream(file)) {
-                return is.readAllBytes();
+                byte[] bytes = is.readAllBytes();
+                return IntStream.range(0, bytes.length).mapToObj(i -> bytes[i]).collect(Collectors.toList());
             } catch (FileNotFoundException e) {
                 System.err.println("File not found");
                 return null;
@@ -24,14 +28,16 @@ public class FileUtil {
         return null;
     }
 
-    public static void writeFile(byte[] plainBytesArray) {
+    public static void writeFile(List<Byte> plainBytesArray) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save File");
         fileChooser.getExtensionFilters().addAll();
         File file = fileChooser.showSaveDialog(null);
         if (file != null) {
             try (OutputStream os = new FileOutputStream(file)) {
-                os.write(plainBytesArray);
+                for (Byte b : plainBytesArray) {
+                    os.write(b);
+                }
             } catch (FileNotFoundException e) {
                 System.err.println("File not found");
             } catch (IOException e) {

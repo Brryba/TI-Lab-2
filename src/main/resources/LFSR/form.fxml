@@ -23,8 +23,9 @@
 
     <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10 0 10 0;">
         <Label text="Начальное состояние регистра:" minWidth="100"/>
-        <TextField fx:id="registerStart" text="11111111111111111111111111111111111"
+        <TextField fx:id="registerStart" text="11111111111111111111111111111111111" onKeyPressed="#showKeyLength" onKeyTyped="#showKeyLength"
                    promptText="Введите данные..." minWidth="500"/>
+        <Label text="35" minWidth="100" fx:id="lengthShower"/>
     </HBox>
 
     <Button text="Зашифровать" fx:id="startCipher" onAction="#cipher"
